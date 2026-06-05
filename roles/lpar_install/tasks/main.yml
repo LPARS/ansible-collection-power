@@ -11,6 +11,6 @@
 - name: "Ensure netboot server is configured"
   ansible.builtin.include_tasks: configure_netboot_server.yml
 
-- name: "Process logical partition installations sequentially"
-  ansible.builtin.include_tasks: lpar_tasks.yml
+- name: "Run logical partition installations sequentially"
+  ansible.builtin.include_tasks: install_lpar.yml
   loop: "{{ lpar_instances }}"

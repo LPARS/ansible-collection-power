@@ -1,5 +1,5 @@
 ---
-- name: "Check if VIOS partition already exists on HMC"
+- name: "Check if VIOS logical partition {{ item.name }} already exists"
   connection: local
   ibm.power_hmc.vios:
     hmc_host: "{{ inventory_hostname }}"
@@ -11,10 +11,10 @@
     state: "facts"
   register: vios_check
 
-- name: "Create and configure VIOS"
+- name: "Run VIOS provisioning tasks"
   connection: local
   block:
-    - name: "Create VIOS with default configuration"
+    - name: "Ensure VIOS logical partition {{ item.name }} is present"
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
@@ -25,7 +25,7 @@
         settings: "{{ item.profile_settings }}"
         state: "present"
 
-    - name: "Install VIOS using the image available on the HMC local disk"
+    - name: "Install VIOS logical partition {{ item.name }} using the image available on the HMC"
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
@@ -43,7 +43,7 @@
         timeout: "{{ item.install_settings.timeout }}"
         action: install
 
-    - name: "Accept VIOS License"
+    - name: "Ensure VIOS license is accepted"
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
@@ -53,7 +53,7 @@
         name: "{{ item.name }}"
         action: accept_license
 
-    - name: "Enable VIOS Firewall and Allow NTP Traffic"
+    - name: "Ensure VIOS firewall is enabled and allows required traffic"
       ibm.power_hmc.vios_secure:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:

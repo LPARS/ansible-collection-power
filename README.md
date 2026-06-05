@@ -6,7 +6,7 @@ This collection includes roles for automating common tasks on IBM Power.
 
 ## Installation
 
-You can include this collection in your requirements.yml like this:
+You can include this collection in your `requirements.yml` like this:
 
 ```
 collections:
