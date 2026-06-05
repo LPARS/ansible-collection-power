@@ -11,7 +11,7 @@
     - name: "Gather HMC facts and MAC addresses"
       ansible.builtin.include_tasks: gather_hmc_facts.yml
 
-    - name: "Configure netboot infrastrcture"
+    - name: "Configure netboot infrastructure"
       ansible.builtin.include_tasks: configure_netboot_client.yml
 
     - name: "Run LPAR installation and verify"

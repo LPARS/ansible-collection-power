@@ -5,30 +5,9 @@
   block:
     - name: "Ensure seed and kickstart file directories are present"
       ansible.builtin.file:
-        path: "{{ inner_item }}"
+        path: "{{ lpar_install_seed_files }}/{{ item.hostname }}"
         state: directory
         mode: '0755'
-      loop:
-        - "{{ lpar_install_seed_files }}"
-        - "{{ lpar_install_kickstart_files }}"
-        - "{{ lpar_install_seed_files }}/{{ item.hostname }}"
-        - "{{ lpar_install_tftp_root }}/boot/grub/grub.cfg.d"
-      loop_control:
-        loop_var: inner_item
-
-    - name: "Ensure base grub configuration is present"
-      ansible.builtin.template:
-        src: grub_conf_base.j2
-        dest: "{{ lpar_install_tftp_root }}/boot/grub/grub.cfg"
-        mode: '0644'
-
-    - name: "Ensure base dhcp configuration is present"
-      ansible.builtin.template:
-        src: dhcpd_conf_base.j2
-        dest: "/etc/dhcp/dhcpd.conf"
-        owner: root
-        group: root
-        mode: '0644'
 
     - name: "Ensure client grub configuration is present"
       ansible.builtin.template:

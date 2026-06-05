@@ -7,7 +7,7 @@ subnet {{ lpar_install_subnet }} netmask {{ lpar_install_netmask }} {
     option routers {{ lpar_install_gateway }};
     option domain-name-servers {{ lpar_install_dns_ip }};
     group {
-        next-server {{ lpar_install_netboot_ip }};
+        next-server {{ lpar_install_netboot_server_ip }};
         filename "/boot/grub/powerpc-ieee1275/core.elf";
     }
 }

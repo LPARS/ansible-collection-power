@@ -13,7 +13,7 @@
     vm_name: "{{ item.vm_name }}"
     install_settings:
       vm_ip: "{{ item.ip_address }}"
-      nim_ip: "{{ lpar_install_netboot_ip }}"
+      nim_ip: "{{ lpar_install_netboot_server_ip }}"
       nim_gateway: "{{ lpar_install_gateway }}"
       nim_subnetmask: "{{ lpar_install_netmask }}"
       vm_mac: "{{ lpar_install_mac_address }}"
