@@ -1,5 +1,2 @@
 ---
-vios_image_dir: "VIOS-4.1.1.0"
-vios_iso_name: "dvdimage.v1.iso"
-
 vios_instances: []

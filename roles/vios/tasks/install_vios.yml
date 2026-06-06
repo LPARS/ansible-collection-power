@@ -25,7 +25,7 @@
         settings: "{{ item.profile_settings }}"
         state: "present"
 
-    - name: "Install VIOS logical partition {{ item.name }} using the ISO available on the HMC"
+    - name: "Install VIOS logical partition {{ item.name }} using the image available on the HMC"
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
@@ -33,11 +33,12 @@
           password: "{{ ansible_password }}"
         system_name: "{{ item.system_name }}"
         name: "{{ item.name }}"
-        image_dir: "{{ vios_image_dir }}"
-        vios_iso: "{{ vios_iso_name }}"
+        image_dir: "{{ item.image_dir }}"
+        vios_iso: "{{ item.vios_iso }}"
         vios_IP: "{{ item.install_settings.vios_ip }}"
         vios_gateway: "{{ item.install_settings.vios_gateway }}"
         vios_subnetmask: "{{ item.install_settings.vios_subnetmask }}"
+        network_macaddr: "{{ item.install_settings.network_macaddr }}"
         action: install
 
     - name: "Ensure VIOS license is accepted"
