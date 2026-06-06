@@ -8,15 +8,15 @@ None.
 
 ## Role Variables
 
-  vios_image_dir: "VIOS-4.1.1.0"
+    vios_image_dir: "VIOS-4.1.1.0"
 
 The directory on the HMC where the VIOS ISO is stored.
 
-  vios_iso_name: "dvdimage.v1.iso"
+    vios_iso_name: "dvdimage.v1.iso"
 
 The filename of the VIOS ISO. Defaults to `dvdimage.v1.iso`.
 
-  vios_instances: []
+    vios_instances: []
 
 A list of dictionaries containing individual VIOS configuration definitions.
 
@@ -31,7 +31,6 @@ A list of dictionaries containing individual VIOS configuration definitions.
 
 | Parameter | Type | Required? | Description |
 | :--- | :--- | :--- | :--- |
-| `profile_name` | String | **Yes** | The name of the profile that the VIOS logical partition will use. |
 | `proc_mode` | String | **Yes** | The processor allocation mode that the VIOS logical partition will use (`ded` or `shared`). |
 | `min_procs` | Integer | **Yes** | The minimum processor allocation for the VIOS logical partition. |
 | `desired_procs` | Integer | **Yes** | The desired processor allocation for the VIOS logical partition. |
@@ -43,14 +42,13 @@ A list of dictionaries containing individual VIOS configuration definitions.
 
 Please refer to https://galaxy.ansible.com/ui/repo/published/ibm/power_hmc/content/module/vios/ for all supported parameters.
 
-###  install_settings:
+### install_settings:
 
 | Property          | Type   | Required | Default / Notes |
 | :---              | :---   | :---:    | :--- |
 | `vios_ip`         | String | **Yes**  | The IP address that will be assigned to the VIOS logical partition. |
 | `vios_gateway`    | String | **Yes**  | The gateway that the VIOS logical partition will use. |
 | `vios_subnetmask` | String | **Yes**  | The subnet mask that the VIOS logical partition will use. |
-| `network_macaddr` | String | No       | The MAC address of the NIC to use on the network card passed through to the VIOS logical partition.If omitted, the HMC attempts to use the first pingable adapter. |
 
 Please refer to https://galaxy.ansible.com/ui/repo/published/ibm/power_hmc/content/module/vios/ for all supported parameters.
 

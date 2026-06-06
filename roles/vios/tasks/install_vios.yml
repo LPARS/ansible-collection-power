@@ -38,9 +38,6 @@
         vios_IP: "{{ item.install_settings.vios_ip }}"
         vios_gateway: "{{ item.install_settings.vios_gateway }}"
         vios_subnetmask: "{{ item.install_settings.vios_subnetmask }}"
-        network_macaddr: "{{ item.install_settings.network_macaddr }}"
-        prof_name: "{{ item.install_settings.prof_name }}"
-        timeout: "{{ item.install_settings.timeout }}"
         action: install
 
     - name: "Ensure VIOS license is accepted"
