@@ -8,7 +8,51 @@ None.
 
 ## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+  vios_image_dir: "VIOS-4.1.1.0"
+
+The directory on the HMC where the VIOS ISO is stored.
+
+  vios_iso_name: "dvdimage.v1.iso"
+
+The filename of the VIOS ISO. Defaults to `dvdimage.v1.iso`.
+
+  vios_instances: []
+
+A list of dictionaries containing individual VIOS configuration definitions.
+
+| Parameter          | Type       | Required | Description                                                                    |
+| :---               | :---       | :---:    | :---                                                                           |
+| `name`             | String     | **Yes**  | The name of the VIOS logical partition.                                        |
+| `system_name`      | String     | **Yes**  | The name of the managed Power system to install the VIOS logical partition to. |
+| `profile_settings` | Dictionary | **Yes**  | Refer to `profile_settings`.                                                   |
+| `install_settings` | Dictionary | **Yes**  | Refer to `install_settings`.                                                   |
+
+### profile_settings
+
+| Parameter | Type | Required? | Description |
+| :--- | :--- | :--- | :--- |
+| `profile_name` | String | **Yes** | The name of the profile that the VIOS logical partition will use. |
+| `proc_mode` | String | **Yes** | The processor allocation mode that the VIOS logical partition will use (`ded` or `shared`). |
+| `min_procs` | Integer | **Yes** | The minimum processor allocation for the VIOS logical partition. |
+| `desired_procs` | Integer | **Yes** | The desired processor allocation for the VIOS logical partition. |
+| `max_procs` | Integer | **Yes** | The maximum processor allocation for the VIOS logical partition. |
+| `min_mem` | Integer | **Yes** | The minimum memory allocation in megabytes. |
+| `desired_mem` | Integer | **Yes** | The desired memory allocation in megabytes. |
+| `max_mem` | Integer | **Yes** | The maximum memory allocation in megabytes. |
+| `io_slots` | String | **Yes** | The physical I/O slots that will be assigned to the VIOS logical partition. |
+
+Please refer to https://galaxy.ansible.com/ui/repo/published/ibm/power_hmc/content/module/vios/ for all supported parameters.
+
+###  install_settings:
+
+| Property          | Type   | Required | Default / Notes |
+| :---              | :---   | :---:    | :--- |
+| `vios_ip`         | String | **Yes**  | The IP address that will be assigned to the VIOS logical partition. |
+| `vios_gateway`    | String | **Yes**  | The gateway that the VIOS logical partition will use. |
+| `vios_subnetmask` | String | **Yes**  | The subnet mask that the VIOS logical partition will use. |
+| `network_macaddr` | String | No       | The MAC address of the NIC to use on the network card passed through to the VIOS logical partition.If omitted, the HMC attempts to use the first pingable adapter. |
+
+Please refer to https://galaxy.ansible.com/ui/repo/published/ibm/power_hmc/content/module/vios/ for all supported parameters.
 
 ## Dependencies
 

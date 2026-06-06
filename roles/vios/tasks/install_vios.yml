@@ -4,8 +4,8 @@
   ibm.power_hmc.vios:
     hmc_host: "{{ inventory_hostname }}"
     hmc_auth:
-      username: "{{ hostvars[groups['hmc'][0]]['ansible_user'] }}"
-      password: "{{ hostvars[groups['hmc'][0]]['ansible_password'] }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
     system_name: "{{ item.system_name }}"
     name: "{{ item.name }}"
     state: "facts"
@@ -18,23 +18,23 @@
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
-          username: "{{ hostvars[groups['hmc'][0]]['ansible_user'] }}"
-          password: "{{ hostvars[groups['hmc'][0]]['ansible_password'] }}"
+          username: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
         system_name: "{{ item.system_name }}"
         name: "{{ item.name }}"
         settings: "{{ item.profile_settings }}"
         state: "present"
 
-    - name: "Install VIOS logical partition {{ item.name }} using the image available on the HMC"
+    - name: "Install VIOS logical partition {{ item.name }} using the ISO available on the HMC"
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
-          username: "{{ hostvars[groups['hmc'][0]]['ansible_user'] }}"
-          password: "{{ hostvars[groups['hmc'][0]]['ansible_password'] }}"
+          username: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
         system_name: "{{ item.system_name }}"
         name: "{{ item.name }}"
-        image_dir: "{{ vios_install_image_dir }}"
-        vios_iso: "{{ vios_install_vios_iso }}"
+        image_dir: "{{ vios_image_dir }}"
+        vios_iso: "{{ vios_iso_name }}"
         vios_IP: "{{ item.install_settings.vios_ip }}"
         vios_gateway: "{{ item.install_settings.vios_gateway }}"
         vios_subnetmask: "{{ item.install_settings.vios_subnetmask }}"
@@ -47,8 +47,8 @@
       ibm.power_hmc.vios:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
-          username: "{{ hostvars[groups['hmc'][0]]['ansible_user'] }}"
-          password: "{{ hostvars[groups['hmc'][0]]['ansible_password'] }}"
+          username: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
         system_name: "{{ item.system_name }}"
         name: "{{ item.name }}"
         action: accept_license
@@ -57,8 +57,8 @@
       ibm.power_hmc.vios_secure:
         hmc_host: "{{ inventory_hostname }}"
         hmc_auth:
-          username: "{{ hostvars[groups['hmc'][0]]['ansible_user'] }}"
-          password: "{{ hostvars[groups['hmc'][0]]['ansible_password'] }}"
+          username: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
         system_name: "{{ item.system_name }}"
         vios_name: "{{ item.name }}"
         state: setting_firewall
