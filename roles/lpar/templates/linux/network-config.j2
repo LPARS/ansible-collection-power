@@ -2,7 +2,7 @@ version: 1
 config:
     - type: physical
       name: eth0
-      mac_address: '{{ lpar_install_mac_address_colon }}'
+      mac_address: '{{ lpar_mac_address_colon }}'
       subnets:
       - type: static
         address: '{{ item.ip_address }}'

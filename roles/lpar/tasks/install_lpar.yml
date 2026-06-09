@@ -18,25 +18,25 @@
         vm_name: "{{ item.vm_name }}"
         advanced_info: true
         state: facts
-      register: lpar_install_facts_output
+      register: lpar_facts_output
 
     - name: "Find MAC address for specific network"
       ansible.builtin.set_fact:
-        lpar_install_mac_address: "{{ inner_item.mac_address }}"
+        lpar_mac_address: "{{ inner_item.mac_address }}"
       when: inner_item.virtual_network_name == item.network_name
-      loop: "{{ lpar_install_facts_output['partition_info']['VirtualNetworkAdapters'] }}"
+      loop: "{{ lpar_facts_output['partition_info']['VirtualNetworkAdapters'] }}"
       loop_control:
         loop_var: inner_item
 
     - name: "Fail if MAC address is empty"
       ansible.builtin.fail:
         msg: "MAC address not found for network: {{ item.network_name }}"
-      when: lpar_install_mac_address is not defined or lpar_install_mac_address | length == 0
+      when: lpar_mac_address is not defined or lpar_mac_address | length == 0
 
     - name: "Convert MAC address formats"
       ansible.builtin.set_fact:
-        lpar_install_mac_address_colon: "{{ lpar_install_mac_address | regex_replace('(..)(..)(..)(..)(..)(..)', '\\1:\\2:\\3:\\4:\\5:\\6') | lower }}"
-        lpar_install_mac_address_hyphen: "{{ lpar_install_mac_address | regex_replace('(..)(..)(..)(..)(..)(..)', '\\1-\\2-\\3-\\4-\\5-\\6') | lower }}"
+        lpar_mac_address_colon: "{{ lpar_mac_address | regex_replace('(..)(..)(..)(..)(..)(..)', '\\1:\\2:\\3:\\4:\\5:\\6') | lower }}"
+        lpar_mac_address_hyphen: "{{ lpar_mac_address | regex_replace('(..)(..)(..)(..)(..)(..)', '\\1-\\2-\\3-\\4-\\5-\\6') | lower }}"
 
     - name: "Configure netboot infrastructure for logical partition {{ item.vm_name }}"
       delegate_to: "{{ groups['netboot'][0] }}"
@@ -44,20 +44,20 @@
       block:
         - name: "Ensure seed and kickstart file directories are present"
           ansible.builtin.file:
-            path: "{{ lpar_install_seed_files }}/{{ item.hostname }}"
+            path: "{{ lpar_seed_files }}/{{ item.hostname }}"
             state: directory
             mode: '0755'
 
         - name: "Ensure client grub configuration is present"
           ansible.builtin.template:
             src: grub_conf_client.j2
-            dest: "{{ lpar_install_tftp_root }}/boot/grub/grub.cfg.d/grub.cfg-01-{{ lpar_install_mac_address_hyphen }}"
+            dest: "{{ lpar_tftp_root }}/boot/grub/grub.cfg.d/grub.cfg-01-{{ lpar_mac_address_hyphen }}"
             mode: '0644'
 
         - name: "Ensure client kickstart configuration is present"
           ansible.builtin.template:
             src: "{{ item.os_type }}/ks.j2"
-            dest: "{{ lpar_install_kickstart_files}}/{{ item.hostname }}.ks"
+            dest: "{{ lpar_kickstart_files}}/{{ item.hostname }}.ks"
             mode: '0644'
 
         - name: "Ensure client dhcp block is appended to dhcpd.conf"
@@ -66,14 +66,14 @@
             marker: "# {mark} Ansible managed client config for {{ item.hostname }}"
             block: "{{ lookup('template', 'dhcpd_conf_client.j2') }}"
             state: present
-          register: lpar_install_dhcp_config
+          register: lpar_dhcp_config
 
         - name: "Ensure dhcpd is restarted"
           ansible.builtin.systemd:
             name: dhcpd
             state: restarted
             enabled: true
-          when: lpar_install_dhcp_config['changed']
+          when: lpar_dhcp_config['changed']
 
     - name: "Include installation tasks for {{ item.os_type }}"
       ansible.builtin.include_tasks: "{{ item.os_type }}_tasks.yml"
@@ -89,10 +89,10 @@
         vm_name: "{{ item.vm_name }}"
         install_settings:
           vm_ip: "{{ item.ip_address }}"
-          nim_ip: "{{ lpar_install_netboot_server_ip }}"
-          nim_gateway: "{{ lpar_install_gateway }}"
-          nim_subnetmask: "{{ lpar_install_netmask }}"
-          vm_mac: "{{ lpar_install_mac_address }}"
+          nim_ip: "{{ lpar_netboot_server_ip }}"
+          nim_gateway: "{{ lpar_gateway }}"
+          nim_subnetmask: "{{ lpar_netmask }}"
+          vm_mac: "{{ lpar_mac_address }}"
           timeout: "{{ item.timeout | default(11) }}"
         action: install_os
 
@@ -113,4 +113,66 @@
         msg: >
           Distribution: {{ hostvars[item.hostname + '.' + item.domain]['ansible_facts']['distribution'] }},
           Version: {{ hostvars[item.hostname + '.' + item.domain]['ansible_facts']['distribution_version'] }}
+
+    - name: "Remove client dhcp block from dhcpd.conf"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.blockinfile:
+        dest: /etc/dhcp/dhcpd.conf
+        marker: "# {mark} Ansible managed client config for {{ item.hostname }}"
+        state: absent
+      register: lpar_dhcp_cleanup
+
+    - name: "Ensure dhcpd is restarted after cleanup"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.systemd:
+        name: dhcpd
+        state: restarted
+      when: lpar_dhcp_cleanup['changed']
+
+    - name: "Remove client grub configuration file"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.file:
+        path: "{{ lpar_tftp_root }}/boot/grub/grub.cfg.d/grub.cfg-01-{{ lpar_mac_address_hyphen }}"
+        state: absent
+
+    - name: "Remove client kickstart configuration file"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.file:
+        path: "{{ lpar_kickstart_files}}/{{ item.hostname }}.ks"
+        state: absent
+
+    - name: "Remove client dhcp block from dhcpd.conf"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.blockinfile:
+        dest: /etc/dhcp/dhcpd.conf
+        marker: "# {mark} Ansible managed client config for {{ item.hostname }}"
+        state: absent
+      register: lpar_dhcp_cleanup
+
+    - name: "Ensure dhcpd is restarted after cleanup"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.systemd:
+        name: dhcpd
+        state: restarted
+      when: lpar_dhcp_cleanup['changed']
+
+    - name: "Remove client grub configuration file"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.file:
+        path: "{{ lpar_tftp_root }}/boot/grub/grub.cfg.d/grub.cfg-01-{{ lpar_mac_address_hyphen }}"
+        state: absent
+
+    - name: "Remove client kickstart configuration file"
+      delegate_to: "{{ groups['netboot'][0] }}"
+      become: true
+      ansible.builtin.file:
+        path: "{{ lpar_kickstart_files}}/{{ item.hostname }}.ks"
+        state: absent
   when: lpar_check is failed or lpar_check is unreachable

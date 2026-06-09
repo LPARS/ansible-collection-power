@@ -23,42 +23,42 @@
       loop_control:
         loop_var: inner_item
 
-    - name: "Ensure {{ lpar_install_os_version }} directory exists in web root"
+    - name: "Ensure {{ lpar_os_version }} directory exists in web root"
       ansible.builtin.file:
-        path: "{{ lpar_install_web_root }}/{{ lpar_install_os_version }}"
+        path: "{{ lpar_web_root }}/{{ lpar_os_version }}"
         state: directory
         mode: '0755'
 
     - name: "Calculate cut-dirs value"
       ansible.builtin.set_fact:
-        lpar_install_cut_dirs: "{{ (lpar_install_mirror_url | urlsplit('path')).split('/') | reject('equalto', '') | list | length }}"
+        lpar_cut_dirs: "{{ (lpar_mirror_url | urlsplit('path')).split('/') | reject('equalto', '') | list | length }}"
 
     - name: "Ensure boot/ directory is downloaded to TFTP root"
       ansible.builtin.command:
         cmd: >
-          wget --mirror --no-parent --no-host-directories --cut-dirs={{ lpar_install_cut_dirs }}
-          --reject="index.html*" -e robots=off --directory-prefix={{ lpar_install_tftp_root }}/
-          {{ lpar_install_mirror_url }}/boot/
+          wget --mirror --no-parent --no-host-directories --cut-dirs={{ lpar_cut_dirs }}
+          --reject="index.html*" -e robots=off --directory-prefix={{ lpar_tftp_root }}/
+          {{ lpar_mirror_url }}/boot/
       args:
-        creates: "{{ lpar_install_tftp_root }}/boot/grub/powerpc-ieee1275"
+        creates: "{{ lpar_tftp_root }}/boot/grub/powerpc-ieee1275"
 
     - name: "Ensure ppc/ directory is downloaded to TFTP root"
       ansible.builtin.command:
         cmd: >
-          wget --mirror --no-parent --no-host-directories --cut-dirs={{ lpar_install_cut_dirs }}
-          --reject="index.html*" -e robots=off --directory-prefix={{ lpar_install_tftp_root }}/
-          {{ lpar_install_mirror_url }}/ppc/
+          wget --mirror --no-parent --no-host-directories --cut-dirs={{ lpar_cut_dirs }}
+          --reject="index.html*" -e robots=off --directory-prefix={{ lpar_tftp_root }}/
+          {{ lpar_mirror_url }}/ppc/
       args:
-        creates: "{{ lpar_install_tftp_root }}/ppc/ppc64"
+        creates: "{{ lpar_tftp_root }}/ppc/ppc64"
 
     - name: "Ensure images/ directory is downloaded to web root"
       ansible.builtin.command:
         cmd: >
-          wget --mirror --no-parent --no-host-directories --cut-dirs={{ lpar_install_cut_dirs }}
-          --reject="index.html*" -e robots=off --directory-prefix={{ lpar_install_web_root }}/{{ lpar_install_os_version }}/
-          {{ lpar_install_mirror_url }}/images/
+          wget --mirror --no-parent --no-host-directories --cut-dirs={{ lpar_cut_dirs }}
+          --reject="index.html*" -e robots=off --directory-prefix={{ lpar_web_root }}/{{ lpar_os_version }}/
+          {{ lpar_mirror_url }}/images/
       args:
-        creates: "{{ lpar_install_web_root }}/{{ lpar_install_os_version }}/images/install.img"
+        creates: "{{ lpar_web_root }}/{{ lpar_os_version }}/images/install.img"
 
     - name: "Ensure seed and kickstart file directories are present"
       ansible.builtin.file:
@@ -66,17 +66,17 @@
         state: directory
         mode: '0755'
       loop:
-        - "{{ lpar_install_cloud_images }}"
-        - "{{ lpar_install_seed_files }}"
-        - "{{ lpar_install_kickstart_files }}"
-        - "{{ lpar_install_tftp_root }}/boot/grub/grub.cfg.d"
+        - "{{ lpar_cloud_images }}"
+        - "{{ lpar_seed_files }}"
+        - "{{ lpar_kickstart_files }}"
+        - "{{ lpar_tftp_root }}/boot/grub/grub.cfg.d"
       loop_control:
         loop_var: inner_item
 
     - name: "Ensure base grub configuration is present"
       ansible.builtin.template:
         src: grub_conf_base.j2
-        dest: "{{ lpar_install_tftp_root }}/boot/grub/grub.cfg"
+        dest: "{{ lpar_tftp_root }}/boot/grub/grub.cfg"
         mode: '0644'
 
     - name: "Ensure base dhcp configuration is present"

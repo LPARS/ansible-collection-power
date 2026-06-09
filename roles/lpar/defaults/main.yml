@@ -1,16 +1,16 @@
-lpar_install_os_version: "almalinux8"
-lpar_install_mirror_url: "https://repo.almalinux.org/almalinux/8/BaseOS/ppc64le/os/"
+lpar_os_version: "almalinux8"
+lpar_mirror_url: "https://repo.almalinux.org/almalinux/8/BaseOS/ppc64le/os/"
 
-lpar_install_web_root: "/var/www/html"
-lpar_install_tftp_root: "/var/lib/tftpboot"
+lpar_web_root: "/var/www/html"
+lpar_tftp_root: "/var/lib/tftpboot"
 
-lpar_install_cloud_images: "{{ lpar_install_web_root }}/cloud-images"
-lpar_install_seed_files: "{{ lpar_install_web_root }}/seed-files"
-lpar_install_kickstart_files: "{{ lpar_install_web_root }}/kickstarts"
+lpar_cloud_images: "{{ lpar_web_root }}/cloud-images"
+lpar_seed_files: "{{ lpar_web_root }}/seed-files"
+lpar_kickstart_files: "{{ lpar_web_root }}/kickstarts"
 
-lpar_install_subnet: ""
-lpar_install_netmask: ""
-lpar_install_gateway: ""
-lpar_install_dns_ip: ""
+lpar_subnet: ""
+lpar_netmask: ""
+lpar_gateway: ""
+lpar_dns_ip: ""
 
 lpar_instances: []
