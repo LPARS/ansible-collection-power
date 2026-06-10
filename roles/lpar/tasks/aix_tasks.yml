@@ -5,7 +5,7 @@
   block:
     - name: "Ensure openstack structure is present"
       ansible.builtin.file:
-        path: "{{ lpar_staging_dir }}/{{ item.hostname }}/{{ inner_item }}"
+        path: "{{ lpar_seed_files }}/{{ item.hostname }}/{{ inner_item }}"
         state: directory
         mode: '0755'
       loop:
@@ -22,9 +22,9 @@
     - name: "Ensure client meta-data file is present"
       ansible.builtin.template:
         src: "{{ item.os_type }}/meta_data.json.j2"
-        dest: "{{ lpar_staging_dir }}/{{ item.hostname }}/openstack/latest/meta_data.json"
+        dest: "{{ lpar_seed_files }}/{{ item.hostname }}/openstack/latest/meta_data.json"
 
     - name: "Ensure client user-config file is present"
       ansible.builtin.template:
         src: "{{ item.os_type }}/user_data.j2"
-        dest: "{{ lpar_staging_dir }}/{{ item.hostname }}/openstack/latest/user_data"
+        dest: "{{ lpar_seed_files }}/{{ item.hostname }}/openstack/latest/user_data"
