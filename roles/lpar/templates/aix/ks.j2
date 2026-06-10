@@ -1,6 +1,6 @@
 text
 
 %pre --interpreter=/usr/bin/bash
-curl -s http://{{ lpar_netboot_server_ip }}/cloud-images/aix-7.3.4-generic-ppc64el.raw | dd of=/dev/sda bs=4M conv=fsync
+curl -s http://{{ lpar_netboot_server_ip }}/cloud-images/aix_7300-04-00-2546_cldrdy_122025.img | dd of=/dev/sda bs=4M conv=fsync
 reboot
 %end
