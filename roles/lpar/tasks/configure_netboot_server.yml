@@ -1,12 +1,11 @@
 ---
-- name: "Configure base netboot server infrastructure"
+- name: "Ensure netboot server is configured"
   delegate_to: "{{ groups['netboot'][0] }}"
   become: true
   block:
     - name: "Ensure necessary packages are present on netboot server"
       ansible.builtin.package:
         name:
-          - dhcp-server
           - httpd
           - tftp-server
           - wget
@@ -77,14 +76,4 @@
       ansible.builtin.template:
         src: grub_conf_base.j2
         dest: "{{ lpar_tftp_root }}/boot/grub/grub.cfg"
-        mode: '0644'
-
-    - name: "Ensure base dhcp configuration is present"
-      ansible.builtin.blockinfile:
-        path: "/etc/dhcp/dhcpd.conf"
-        create: yes
-        block: "{{ lookup('template', 'dhcpd_conf_base.j2') }}"
-        marker: "# {mark} Ansible managed base config"
-        owner: root
-        group: root
         mode: '0644'
