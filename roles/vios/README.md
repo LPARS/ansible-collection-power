@@ -14,8 +14,8 @@ The list of of VIOS logical partitions to be created and installed. Supports the
 
 | Parameter         | Type       | Required | Description                                                     |
 | :---              | :---       | :---:    | :---                                                            |
-| `name`            | String     | **Yes**  | The name of the VIOS.                                           |
 | `system_name`     | String     | **Yes**  | The name of the managed system to install the VIOS on.          |
+| `name`            | String     | **Yes**  | The name of the VIOS.                                           |
 | `image_dir`       | String     | **Yes**  | The directory on the HMC where the VIOS image is stored.        |
 | `vios_iso`        | String     | **Yes**  | The filename of the VIOS image the VIOS will use.               |
 | `vios_ip`         | String     | **Yes**  | The IP address the VIOS will use.                               |
