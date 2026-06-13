@@ -1,0 +1,12 @@
+---
+netboot_packages:
+  - apache2
+  - tftpd-hpa
+  - wget
+
+netboot_services:
+  - apache2
+  - tftpd-hpa
+
+lpar_web_root: "/var/www/html"
+lpar_tftp_root: "/srv/tftp"

@@ -1,13 +1,14 @@
+---
 - name: "Ensure netboot server is configured"
   delegate_to: "{{ groups['netboot'][0] }}"
   become: true
   block:
+    - name: "Include installation variables for {{ ansible_facts['os_family'] }}"
+      ansible.builtin.include_vars: "{{ ansible_facts['os_family'] }}.yml"
+
     - name: "Ensure necessary packages are present on netboot server"
       ansible.builtin.package:
-        name:
-          - httpd
-          - tftp-server
-          - wget
+        name: "{{ lpar_netboot_packages }}"
         state: present
 
     - name: "Ensure necessary services are started and enabled on netboot server"
@@ -15,9 +16,7 @@
         name: "{{ inner_item }}"
         state: started
         enabled: true
-      loop:
-        - httpd
-        - tftp.socket
+      loop: "{{ lpar_netboot_services }}"
       loop_control:
         loop_var: inner_item
 

@@ -1,0 +1,12 @@
+---
+netboot_packages:
+  - httpd
+  - tftp-server
+  - wget
+
+netboot_services:
+  - httpd
+  - tftp.socket
+
+lpar_web_root: "/var/www/html"
+lpar_tftp_root: "/var/lib/tftpboot"
